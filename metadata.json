@@ -1,0 +1,8 @@
+{
+  "name": "Próximo Aprovado",
+  "description": "Plataforma completa de estudos para concursos públicos, com banco de questões, videoaulas, PDFs, simulados, chat em tempo real e área do aluno.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
