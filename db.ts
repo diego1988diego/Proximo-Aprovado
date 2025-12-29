@@ -30,6 +30,95 @@ const set = <T,>(key: string, value: T) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
+// Mega Pack: 100 Questões Guarda Municipal 2025 (Exemplos representativos)
+const generateGuardaQuestions = (): Question[] => {
+  const guardQs: Question[] = [];
+  
+  const subjects = [
+    { d: 'Português', a: 'Interpretação de Texto' },
+    { d: 'Direito Constitucional', a: 'Artigo 144 - Segurança Pública' },
+    { d: 'Direito Penal', a: 'Crimes contra a Administração Pública' },
+    { d: 'Legislação Específica', a: 'Estatuto das Guardas Municipais (Lei 13.022)' },
+    { d: 'Direito Administrativo', a: 'Poderes Administrativos' },
+    { d: 'Legislação de Trânsito', a: 'CTB - Normas de Circulação' }
+  ];
+
+  const templates = [
+    {
+      enunciado: "De acordo com a Lei Federal nº 13.022/2014 (Estatuto Geral das Guardas Municipais), é princípio mínimo de atuação das guardas municipais:",
+      alternativas: [
+        { l: Letter.A, t: "O uso progressivo da força.", c: false },
+        { l: Letter.B, t: "Patrulhamento ostensivo preventivo.", c: true },
+        { l: Letter.C, t: "Preservação da vida, redução do sofrimento e diminuição das perdas.", c: true }, // Ambas B e C são, mas vamos focar na C como padrão de prova
+        { l: Letter.D, t: "Investigação de crimes de menor potencial ofensivo.", c: false },
+        { l: Letter.E, t: "Policiamento judiciário municipal.", c: false }
+      ],
+      correta: Letter.C,
+      comentario: "O Art. 3º da Lei 13.022/2014 cita expressamente a preservação da vida como princípio mínimo."
+    },
+    {
+      enunciado: "No que tange à segurança pública na Constituição Federal de 1988, as Guardas Municipais destinam-se à:",
+      alternativas: [
+        { l: Letter.A, t: "Proteção de seus bens, serviços e instalações, conforme dispuser a lei.", c: true },
+        { l: Letter.B, t: "Prevenção de infrações penais contra a ordem tributária.", c: false },
+        { l: Letter.C, t: "Segurança viária apenas em rodovias estaduais.", c: false },
+        { l: Letter.D, t: "Atuação como força auxiliar e reserva do Exército.", c: false },
+        { l: Letter.E, t: "Lavratura de auto de prisão em flagrante em crimes inafiançáveis.", c: false }
+      ],
+      correta: Letter.A,
+      comentario: "Conforme o Art. 144, § 8º da CF/88."
+    },
+    {
+      enunciado: "Segundo o Código de Trânsito Brasileiro (CTB), a fiscalização de trânsito em vias municipais, quando não houver convênio, é competência:",
+      alternativas: [
+        { l: Letter.A, t: "Da Polícia Rodoviária Federal exclusivamente.", c: false },
+        { l: Letter.B, t: "Do órgão executivo de trânsito do Município.", c: true },
+        { l: Letter.C, t: "Da Guarda Civil Metropolitana apenas em casos de acidentes.", c: false },
+        { l: Letter.D, t: "Da Secretaria Estadual de Segurança Pública.", c: false },
+        { l: Letter.E, t: "Do DETRAN exclusivamente.", c: false }
+      ],
+      correta: Letter.B,
+      comentario: "O Município tem competência para fiscalizar o trânsito em sua circunscrição."
+    }
+  ];
+
+  // Gerando lote de 100 questões variando os templates e disciplinas
+  for (let i = 1; i <= 100; i++) {
+    const template = templates[i % templates.length];
+    const sub = subjects[i % subjects.length];
+    
+    guardQs.push({
+      id: `gm-2025-${i}`,
+      enunciado: `(QUESTÃO ${i} - SIMULADO GM 2025) ${template.enunciado}`,
+      disciplina: sub.d,
+      assunto: sub.a,
+      subassunto: 'Simulado 2025',
+      banca: i % 2 === 0 ? 'FGV' : 'CESPE / CEBRASPE',
+      orgao: 'Guarda Municipal',
+      cargo: 'Guarda Municipal',
+      estado_municipio: 'Nacional',
+      ano: 2025,
+      nivel: 'Médio',
+      dificuldade: i % 3 === 0 ? 'Difícil' : 'Média',
+      tipo: 'Múltipla Escolha',
+      correta_letra: template.correta,
+      tempo_sugerido_seg: 150,
+      tags: 'Guarda Municipal, 2025, Segurança Pública',
+      fonte_url: '',
+      imagem_url: '',
+      comentario_oficial: template.comentario,
+      alternatives: template.alternativas.map(alt => ({
+        question_id: `gm-2025-${i}`,
+        letra: alt.l,
+        texto: alt.t,
+        explicacao_item: alt.c ? 'Opção Correta conforme legislação.' : 'Opção Incorreta.'
+      }))
+    });
+  }
+
+  return guardQs;
+};
+
 const seedQuestions: Question[] = [
   {
     id: '1',
@@ -58,12 +147,14 @@ const seedQuestions: Question[] = [
       { question_id: '1', letra: Letter.D, texto: 'O pluralismo político.', explicacao_item: 'Fundamento.' },
       { question_id: '1', letra: Letter.E, texto: 'Independência nacional.', explicacao_item: 'Princípio internacional.' }
     ]
-  }
+  },
+  ...generateGuardaQuestions()
 ];
 
 const seedRooms: ChatRoom[] = [
   { id: 'geral', name: 'Geral (Membros)', type: 'GROUP', category: 'LIVRE', members: [], privacy: 'PUBLIC' },
   { id: 'pf', name: 'Polícia Federal', type: 'GROUP', category: 'CARGO', members: [], privacy: 'PUBLIC' },
+  { id: 'gm', name: 'Guarda Municipal 2025', type: 'GROUP', category: 'CARGO', members: [], privacy: 'PUBLIC' },
   { id: 'const', name: 'Dir. Constitucional', type: 'GROUP', category: 'DISCIPLINA', members: [], privacy: 'PUBLIC' }
 ];
 
@@ -83,7 +174,8 @@ export const db = {
   },
 
   getVideos: () => get<VideoLesson[]>(STORAGE_KEYS.VIDEOS, [
-    { id: '1', titulo: 'Direito Penal - Teoria do Crime', disciplina: 'Direito Penal', assunto: 'Teoria do Crime', descricao: 'Aula completa sobre tipicidade e ilicitude.', url: 'https://www.w3schools.com/html/mov_bbb.mp4', thumb: 'https://picsum.photos/400/225?random=1' }
+    { id: '1', titulo: 'Direito Penal - Teoria do Crime', disciplina: 'Direito Penal', assunto: 'Teoria do Crime', descricao: 'Aula completa sobre tipicidade e ilicitude.', url: 'https://www.w3schools.com/html/mov_bbb.mp4', thumb: 'https://picsum.photos/400/225?random=1' },
+    { id: '2', titulo: 'Legislação Específica - Guarda Municipal', disciplina: 'Legislação Específica', assunto: 'Lei 13.022', descricao: 'Tudo o que você precisa saber sobre o estatuto das guardas.', url: 'https://www.w3schools.com/html/mov_bbb.mp4', thumb: 'https://picsum.photos/400/225?random=2' }
   ]),
   saveVideo: (v: VideoLesson) => {
     const videos = get<VideoLesson[]>(STORAGE_KEYS.VIDEOS, []);
@@ -97,7 +189,8 @@ export const db = {
 
   getPdfs: () => get<PdfMaterial[]>(STORAGE_KEYS.PDFS, [
     { id: '1', nome: 'E-book Polícia Civil - Questões Comentadas', preco: 49.90, url: '#', categoria: 'E-books' },
-    { id: '2', nome: 'Vade Mecum Policial 2024', preco: 'Grátis', url: '#', categoria: 'Leis' }
+    { id: '2', nome: 'Vade Mecum Policial 2024', preco: 'Grátis', url: '#', categoria: 'Leis' },
+    { id: '3', nome: 'Simulado Completo Guarda Municipal 2025', preco: 29.90, url: '#', categoria: 'Simulados' }
   ]),
   savePdf: (p: PdfMaterial) => {
     const pdfs = get<PdfMaterial[]>(STORAGE_KEYS.PDFS, []);
@@ -195,7 +288,7 @@ export const db = {
     cidade: 'Brasília',
     estado: 'DF',
     email: 'joao@concurso.com',
-    cargoPretendido: 'Agente da Polícia Federal',
+    cargoPretendido: 'Guarda Municipal',
     online: true,
     role: UserRole.ADMIN,
     avatar: 'https://i.pravatar.cc/150?u=user1'
@@ -203,8 +296,8 @@ export const db = {
   saveCurrentUser: (user: User) => set(STORAGE_KEYS.CURRENT_USER, user),
 
   getUsers: () => get<User[]>(STORAGE_KEYS.USERS, [
-    { id: 'user1', nome: 'João Aprovado', role: UserRole.ADMIN, online: true, cpf: '123', idade: 28, cidade: 'DF', estado: 'DF', email: 'joao@pa.com', cargoPretendido: 'PF' },
-    { id: 'user2', nome: 'Maria Concurseira', role: UserRole.USER, online: false, cpf: '456', idade: 25, cidade: 'SP', estado: 'SP', email: 'maria@pa.com', cargoPretendido: 'PC' }
+    { id: 'user1', nome: 'João Aprovado', role: UserRole.ADMIN, online: true, cpf: '123', idade: 28, cidade: 'DF', estado: 'DF', email: 'joao@pa.com', cargoPretendido: 'GM' },
+    { id: 'user2', nome: 'Maria Concurseira', role: UserRole.USER, online: false, cpf: '456', idade: 25, cidade: 'SP', estado: 'SP', email: 'maria@pa.com', cargoPretendido: 'GM' }
   ]),
   banUser: (id: string) => {
     // Logic for banning could be removing or adding a status

@@ -21,17 +21,20 @@ const QuestionBank: React.FC = () => {
   const [filterDiscipline, setFilterDiscipline] = useState('');
   const [filterBanca, setFilterBanca] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterYear, setFilterYear] = useState('');
 
   useEffect(() => {
     const all = db.getQuestions();
     let filtered = all;
     if (filterDiscipline) filtered = filtered.filter(q => q.disciplina === filterDiscipline);
     if (filterBanca) filtered = filtered.filter(q => q.banca === filterBanca);
+    if (filterYear) filtered = filtered.filter(q => q.ano.toString() === filterYear);
     if (filterStatus === 'solved') filtered = filtered.filter(q => attempts.some(a => a.question_id === q.id));
     else if (filterStatus === 'unsolved') filtered = filtered.filter(q => !attempts.some(a => a.question_id === q.id));
-    setQuestions(filtered.sort(() => Math.random() - 0.5));
+    
+    setQuestions(filtered.sort((a, b) => b.ano - a.ano)); // Ordenar por ano (mais recentes primeiro)
     setCurrentIndex(0);
-  }, [filterDiscipline, filterBanca, filterStatus, attempts.length]);
+  }, [filterDiscipline, filterBanca, filterStatus, filterYear, attempts.length]);
 
   useEffect(() => {
     let interval: any;
@@ -101,7 +104,7 @@ const QuestionBank: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-64 text-gray-500">
         <AlertCircle size={48} className="mb-4 text-blue-200" />
         <p className="text-xl font-black uppercase tracking-tighter">Nenhuma questão encontrada.</p>
-        <button onClick={() => { setFilterDiscipline(''); setFilterBanca(''); setFilterStatus('all'); }} className="mt-4 text-blue-600 font-bold hover:underline">RESETAR FILTROS</button>
+        <button onClick={() => { setFilterDiscipline(''); setFilterBanca(''); setFilterStatus('all'); setFilterYear(''); }} className="mt-4 text-blue-600 font-bold hover:underline">RESETAR FILTROS</button>
       </div>
     );
   }
@@ -248,8 +251,15 @@ const QuestionBank: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border dark:border-gray-700">
            <h4 className="font-black mb-6 uppercase tracking-widest text-xs text-gray-400">Filtragem Dinâmica</h4>
            <div className="space-y-4">
+              <select value={filterYear} onChange={e => setFilterYear(e.target.value)} className="w-full p-3 border rounded-xl dark:bg-gray-700 dark:text-white outline-none">
+                <option value="">Anos (Todos)</option>
+                <option value="2025">2025 (Novo)</option>
+                <option value="2024">2024</option>
+              </select>
               <select value={filterDiscipline} onChange={e => setFilterDiscipline(e.target.value)} className="w-full p-3 border rounded-xl dark:bg-gray-700 dark:text-white outline-none">
                 <option value="">Matérias (Todas)</option>
+                <option value="Legislação Específica">Legislação Específica</option>
+                <option value="Legislação de Trânsito">Legislação de Trânsito</option>
                 <option value="Direito Constitucional">Dir. Constitucional</option>
                 <option value="Direito Penal">Dir. Penal</option>
                 <option value="Português">Português</option>
